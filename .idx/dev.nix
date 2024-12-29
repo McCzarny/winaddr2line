@@ -9,7 +9,7 @@
     pkgs.clang
     pkgs.cmake
     pkgs.gnumake
-    pkgs.clang-clang-tools
+    pkgs.clang-tools
   ];
 
   # Sets environment variables in the workspace

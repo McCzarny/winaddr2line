@@ -2,7 +2,7 @@ name: Build project and create release
 
 on:
   push:
-    branches: [ master ]    
+    branches: [ master, workflow ]    
     tags:
       - 'v*'
 
@@ -38,6 +38,7 @@ jobs:
           Write-Host "Conan profile updated successfully"
       - name: Build
         run: |
+          dir "C:\ProgramData\chocolatey\bin"
           $env:Path += ";C:\ProgramData\chocolatey\bin"
           conan install . --build=missing
           cmake -S . -B build -G Ninja
