@@ -1,0 +1,45 @@
+name: Build project and create release
+
+on:
+  push:
+    branches: [ master ]    
+    tags:
+      - 'v*'
+
+  pull_request:
+    branches: [ master ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install build tools
+        run: |
+          choco install visualstudio2019buildtools
+          choco install conan
+          choco install cmake
+          choco install ninja
+      - name: Init conan profile
+        run: conan profile detect
+      - name: Set C++ standard to 17
+        run: conan profile update settings.compiler.cppstd=17 default
+      - name: Build
+        run: |
+          conan install . --build=missing
+          cmake -S . -B build -G Ninja
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-build
+          path: build/Release/winaddr2line.exe
+      - name: Create Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v1
+        with:
+          files: build/Release/winaddr2line.exe

@@ -33,6 +33,7 @@
 
 # CMake
 CMakeUserPresets.json
+CMakePresets.json
 
 # Build directory
 build
