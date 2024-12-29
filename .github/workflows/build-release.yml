@@ -26,11 +26,23 @@ jobs:
           choco install cmake
           choco install ninja
       - name: Init conan profile
-        run: conan profile detect
-      - name: Set C++ standard to 17
-        run: conan profile update settings.compiler.cppstd=17 default
+        run: |
+          $env:Path += ";C:\ProgramData\chocolatey\bin"
+          conan profile detect
+      - name: Update Conan profile to use C++17
+        shell: pwsh
+        run: |
+          $PROFILE_PATH = "$env:USERPROFILE\.conan\profiles\default"
+          $CPPSTD_SETTING = "compiler.cppstd=17"
+          if (Get-Content $PROFILE_PATH | Select-String -Pattern "compiler.cppstd=") {
+            (Get-Content $PROFILE_PATH) -replace "compiler.cppstd=.*", $CPPSTD_SETTING | Set-Content $PROFILE_PATH
+          } else {
+            Add-Content -Path $PROFILE_PATH -Value $CPPSTD_SETTING
+          }
+          Write-Host "Conan profile updated successfully"
       - name: Build
         run: |
+          $env:Path += ";C:\ProgramData\chocolatey\bin"
           conan install . --build=missing
           cmake -S . -B build -G Ninja
       - name: Upload artifact
