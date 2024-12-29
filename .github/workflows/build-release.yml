@@ -32,7 +32,7 @@ jobs:
       - name: Update Conan profile to use C++17
         shell: pwsh
         run: |
-          $PROFILE_PATH = "$env:USERPROFILE\.conan\profiles\default"
+          $PROFILE_PATH = "$env:USERPROFILE\.conan2\profiles\default"
           $CPPSTD_SETTING = "compiler.cppstd=17"
           if (Get-Content $PROFILE_PATH | Select-String -Pattern "compiler.cppstd=") {
             (Get-Content $PROFILE_PATH) -replace "compiler.cppstd=.*", $CPPSTD_SETTING | Set-Content $PROFILE_PATH
@@ -42,6 +42,10 @@ jobs:
           Write-Host "Conan profile updated successfully"
       - name: Build
         run: |
+          $env:ChocolateyInstall = Convert-Path "$((Get-Command choco).Path)\..\.."   
+          Import-Module "$env:ChocolateyInstall\helpers\chocolateyProfile.psm1"
+          refreshenv
+
           conan install . --build=missing
           cmake -S . -B build -G Ninja
       - name: Upload artifact
