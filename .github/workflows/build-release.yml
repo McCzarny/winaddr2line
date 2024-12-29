@@ -21,7 +21,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Install build tools
         run: |
-          choco install visualstudio2019buildtools
+          choco install visualstudio2022buildtools
           choco install conan
           choco install cmake
           choco install ninja
