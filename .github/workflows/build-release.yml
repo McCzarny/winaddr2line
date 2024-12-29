@@ -20,11 +20,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Install build tools
-        run: choco install -y --no-progress visualstudio2022buildtools conan cmake ninja
+        run: |
+          choco install -y --no-progress visualstudio2022buildtools conan cmake ninja
+          refreshenv
       - name: Init conan profile
         run: |
-          dir "C:\ProgramData\chocolatey\bin"
-          $env:Path += ";C:\ProgramData\chocolatey\bin"
           conan profile detect
       - name: Update Conan profile to use C++17
         shell: pwsh
@@ -39,7 +39,6 @@ jobs:
           Write-Host "Conan profile updated successfully"
       - name: Build
         run: |
-          $env:Path += ";C:\ProgramData\chocolatey\bin"
           conan install . --build=missing
           cmake -S . -B build -G Ninja
       - name: Upload artifact
