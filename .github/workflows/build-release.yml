@@ -48,6 +48,7 @@ jobs:
 
           conan install . --build=missing
           cmake -S . -B build -G Ninja
+          dir build
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
