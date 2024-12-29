@@ -28,6 +28,9 @@ jobs:
           refreshenv
       - name: Init conan profile
         run: |
+          dir 'C:\Program Files\Conan\'
+          refreshenv
+          dir 'C:\Program Files\Conan\'
           conan profile detect
       - name: Update Conan profile to use C++17
         shell: pwsh
