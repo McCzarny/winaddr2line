@@ -23,6 +23,7 @@ jobs:
         run: choco install -y --no-progress visualstudio2022buildtools conan cmake ninja
       - name: Init conan profile
         run: |
+          dir "C:\ProgramData\chocolatey\bin"
           $env:Path += ";C:\ProgramData\chocolatey\bin"
           conan profile detect
       - name: Update Conan profile to use C++17
@@ -38,7 +39,6 @@ jobs:
           Write-Host "Conan profile updated successfully"
       - name: Build
         run: |
-          dir "C:\ProgramData\chocolatey\bin"
           $env:Path += ";C:\ProgramData\chocolatey\bin"
           conan install . --build=missing
           cmake -S . -B build -G Ninja
