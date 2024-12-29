@@ -20,8 +20,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Install build tools
+        shell: pwsh
         run: |
           choco install -y --no-progress visualstudio2022buildtools conan cmake ninja
+          $env:ChocolateyInstall = Convert-Path "$((Get-Command choco).Path)\..\.."   
+          Import-Module "$env:ChocolateyInstall\helpers\chocolateyProfile.psm1"
           refreshenv
       - name: Init conan profile
         run: |
