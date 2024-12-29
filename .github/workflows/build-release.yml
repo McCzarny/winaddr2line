@@ -20,11 +20,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Install build tools
-        run: |
-          choco install visualstudio2022buildtools
-          choco install conan
-          choco install cmake
-          choco install ninja
+        run: choco install -y --no-progress visualstudio2022buildtools conan cmake ninja
       - name: Init conan profile
         run: |
           $env:Path += ";C:\ProgramData\chocolatey\bin"
