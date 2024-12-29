@@ -23,14 +23,11 @@ jobs:
         shell: pwsh
         run: |
           choco install -y --no-progress visualstudio2022buildtools conan cmake ninja
+      - name: Init conan profile
+        run: |
           $env:ChocolateyInstall = Convert-Path "$((Get-Command choco).Path)\..\.."   
           Import-Module "$env:ChocolateyInstall\helpers\chocolateyProfile.psm1"
           refreshenv
-      - name: Init conan profile
-        run: |
-          dir 'C:\Program Files\Conan\'
-          refreshenv
-          dir 'C:\Program Files\Conan\'
           conan profile detect
       - name: Update Conan profile to use C++17
         shell: pwsh
