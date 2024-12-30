@@ -9,7 +9,8 @@
     pkgs.clang
     pkgs.cmake
     pkgs.gnumake
-    pkgs.clang-clang-tools
+    pkgs.clang-tools
+    pkgs.python3
   ];
 
   # Sets environment variables in the workspace

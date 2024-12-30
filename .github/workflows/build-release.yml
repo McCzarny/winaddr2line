@@ -2,7 +2,7 @@ name: Build project and create release
 
 on:
   push:
-    branches: [ master ]    
+    branches: [ master, workflow ]    
     tags:
       - 'v*'
 
@@ -20,15 +20,20 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Install build tools
-        run: choco install -y --no-progress visualstudio2022buildtools conan cmake ninja
-      - name: Init conan profile
+        shell: pwsh
         run: |
-          $env:Path += ";C:\ProgramData\chocolatey\bin"
+          choco install -y --no-progress visualstudio2022buildtools conan cmake ninja llvm
+      - name: Init conan profile
+        shell: pwsh
+        run: |
+          $env:ChocolateyInstall = Convert-Path "$((Get-Command choco).Path)\..\.."   
+          Import-Module "$env:ChocolateyInstall\helpers\chocolateyProfile.psm1"
+          refreshenv
           conan profile detect
       - name: Update Conan profile to use C++17
         shell: pwsh
         run: |
-          $PROFILE_PATH = "$env:USERPROFILE\.conan\profiles\default"
+          $PROFILE_PATH = "$env:USERPROFILE\.conan2\profiles\default"
           $CPPSTD_SETTING = "compiler.cppstd=17"
           if (Get-Content $PROFILE_PATH | Select-String -Pattern "compiler.cppstd=") {
             (Get-Content $PROFILE_PATH) -replace "compiler.cppstd=.*", $CPPSTD_SETTING | Set-Content $PROFILE_PATH
@@ -37,10 +42,18 @@ jobs:
           }
           Write-Host "Conan profile updated successfully"
       - name: Build
+        shell: pwsh
         run: |
-          $env:Path += ";C:\ProgramData\chocolatey\bin"
+          $env:ChocolateyInstall = Convert-Path "$((Get-Command choco).Path)\..\.."   
+          Import-Module "$env:ChocolateyInstall\helpers\chocolateyProfile.psm1"
+          refreshenv
+
           conan install . --build=missing
-          cmake -S . -B build -G Ninja
+          conan build .
+      - name: Run clang-tidy
+        shell: pwsh
+        run: |
+          clang-tidy -p build src/*.cpp -extra-arg=-std=c++17 -- -Iinclude 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
