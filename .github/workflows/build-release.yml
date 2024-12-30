@@ -47,7 +47,7 @@ jobs:
           refreshenv
 
           conan install . --build=missing
-          cmake -S . -B build -G Ninja
+          conan build .
           dir build
       - name: Upload artifact
         uses: actions/upload-artifact@v4
