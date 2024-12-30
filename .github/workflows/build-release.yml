@@ -53,7 +53,7 @@ jobs:
       - name: Run clang-tidy
         shell: pwsh
         run: |
-          clang-tidy -p build src/*.cpp -- -Iinclude
+          clang-tidy -p build src/*.cpp -extra-arg=-std=c++17 -- -Iinclude 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
