@@ -54,12 +54,12 @@ jobs:
         shell: pwsh
         run: |
           clang-tidy -p build src/*.cpp -extra-arg=-std=c++17 -- -Iinclude 
-      - name: Upload artifact
+      - name: Upload artifact executable
         uses: actions/upload-artifact@v4
         with:
           name: release-build
-          path: build/Release/winaddr2line.
-      - name: Upload artifact
+          path: build/Release/winaddr2line.exe
+      - name: Upload artifact test pdb file
         uses: actions/upload-artifact@v4
         with:
           name: test-pdb-file
