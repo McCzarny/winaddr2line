@@ -1,9 +1,10 @@
 from conan import ConanFile
 from conan.tools.cmake import CMakeToolchain, CMake, cmake_layout, CMakeDeps
 from conan.tools.build import check_min_cppstd
+from conan.tools.env import Environment
 
 
-class grayscaleRecipe(ConanFile):
+class winaddr2lineRecipe(ConanFile):
     name = "winaddr2line"
     version = "0.0.1"
     package_type = "application"
@@ -22,7 +23,7 @@ class grayscaleRecipe(ConanFile):
     default_options = {"shared": False, "fPIC": True}
 
     # Sources are located in the same place as this recipe, copy them to the recipe
-    exports_sources = "CMakeLists.txt", "src/*", "include/*"
+    exports_sources = "CMakeLists.txt", "src/*", "include/*", "test_package/*"
 
     def config_options(self):
         if self.settings.os == "Windows":
@@ -46,6 +47,12 @@ class grayscaleRecipe(ConanFile):
         cmake.configure()
         cmake.build()
 
+        environment = Environment()
+        environment.define("CTEST_OUTPUT_ON_FAILURE", "1")
+        envvars = environment.vars(self)
+        with envvars.apply():
+            cmake.test(cli_args=["--verbose"])
+
     def package(self):
         cmake = CMake(self)
         cmake.install()
@@ -54,7 +61,6 @@ class grayscaleRecipe(ConanFile):
         pass
 
     def build_requirements(self):
-        # self.requires("gtest/1.15.0")
         pass
 
     def validate(self):

@@ -1,0 +1,37 @@
+[
+    {
+        "input_address": "0x1000",
+        "expected_line": "C:\\Users\\czarneckim\\repositories\\winaddr2line\\testing_binary\\src\\testApp.cpp:42",
+        "expected_symbol": "main"
+    },
+    {
+        "input_address": "1000",
+        "expected_line": "C:\\Users\\czarneckim\\repositories\\winaddr2line\\testing_binary\\src\\testApp.cpp:42",
+        "expected_symbol": "main"
+    },
+    {
+        "input_address": "0x1103",
+        "expected_line": "C:\\Users\\czarneckim\\repositories\\winaddr2line\\testing_binary\\src\\testApp.cpp:48",
+        "expected_symbol": "main"
+    },
+    {
+        "input_address": "0x2800",
+        "expected_line": "C:\\Users\\czarneckim\\repositories\\winaddr2line\\testing_binary\\src\\testApp.cpp:31",
+        "expected_symbol": "TextExtractor::processTexts<<lambda_de390742b4447c477e4e7f2e67523fc2> >"
+    },
+    {
+        "input_address": "0x3EA0",
+        "expected_line": "C:\\Users\\czarneckim\\repositories\\winaddr2line\\testing_binary\\src\\testApp.cpp:24",
+        "expected_symbol": "TextExtractor::printTexts"
+    },
+    {
+        "input_address": "0x3F1C",
+        "expected_line": "C:\\Users\\czarneckim\\repositories\\winaddr2line\\testing_binary\\src\\testApp.cpp:27",
+        "expected_symbol": "TextExtractor::printTexts"
+    },
+    {
+        "input_address": "0x3F1E",
+        "expected_line": "C:\\Users\\czarneckim\\repositories\\winaddr2line\\testing_binary\\src\\testApp.cpp:28",
+        "expected_symbol": "TextExtractor::printTexts"
+    }
+]

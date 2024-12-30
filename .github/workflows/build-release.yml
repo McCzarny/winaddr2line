@@ -58,7 +58,12 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: release-build
-          path: build/Release/winaddr2line.exe
+          path: build/Release/winaddr2line.
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-pdb-file
+          path: build/testing_binary/**/test_app.pdb
       - name: Create Release
         if: startsWith(github.ref, 'refs/tags/v')
         uses: softprops/action-gh-release@v1

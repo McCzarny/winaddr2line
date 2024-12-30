@@ -5,7 +5,11 @@
 #include "DbgHelpManager.hpp"
 
 void printUsage() {
-    std::cout << "Usage: winaddr2line -e <PDB_FILE> <ADDRESS>" << std::endl;
+    std::cout << "Usage: winaddr2line -e <PDB_FILE> [-f] <ADDRESS>" << std::endl;
+    std::cout << "Options:" << std::endl;
+    std::cout << "  -e <PDB_FILE>  Specify the PDB file to use for symbol resolution." << std::endl;
+    std::cout << "  -f             Show the function name in addition to the address." << std::endl;
+    std::cout << "  <ADDRESS>      The address to resolve." << std::endl;
 }
 
 uintptr_t parseAddress(const std::string& address) {
@@ -19,14 +23,18 @@ uintptr_t parseAddress(const std::string& address) {
 
 int main(int argc, char *argv[]) {
     if (argc < 4) {
+        std::cerr << "Invalid number of arguments: " << argc << std::endl;
         printUsage();
         return 1;
     }
 
     std::string executable, addressStr;
+    bool showFunction = false;
     for (int i = 1; i < argc; ++i) {
         if (std::string(argv[i]) == "-e" && i + 1 < argc) {
             executable = argv[++i];
+        } else if (std::string(argv[i]) == "-f") {
+            showFunction = true;
         } else {
             addressStr = argv[i];
         }
@@ -46,15 +54,21 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
+    if (addressStr.size() > 2 && addressStr.substr(0, 2) != "0x") {
+        addressStr = "0x" + addressStr;
+    }
+
     // Adding the base address to the input address
     // to align it with the address in the PDB file.
     auto address = parseAddress(addressStr) + baseAddr;
 
-    auto functionName = dbgHelpManager.getSymbolFromAddress(address);
-    if (functionName) {
-        std::cout << "Function: " << *functionName << "\n";
-    } else {
-        std::cerr << "Failed to resolve symbol.\n";
+    if (showFunction) {
+      auto functionName = dbgHelpManager.getSymbolFromAddress(address);
+      if (functionName) {
+          std::cout << *functionName << "\n";
+      } else {
+          std::cerr << "Failed to resolve symbol.\n";
+      }
     }
 
     std::string fileName;
@@ -62,7 +76,7 @@ int main(int argc, char *argv[]) {
     auto result = dbgHelpManager.getLineFromAddress(address);
     if (result) {
         std::tie(fileName, lineNumber) = result.value();
-        std::cout << "File: " << fileName << ", Line: " << lineNumber << "\n";
+        std::cout << fileName << ":" << lineNumber << "\n";
     } else {
         std::cerr << "Failed to resolve line info.\n";
     }
