@@ -15,7 +15,7 @@ class WinAddr2LineTests(unittest.TestCase):
             "-f",
         ]
         self.src_path = (
-            "C:\\Users\\czarneckim\\repositories\\winaddr2line\\testing_binary\\src\\"
+            "D:\\a\\winaddr2line\\winaddr2line\\testing_binary\\src\\"
         )
 
     def run_expecting_success(self, args, expected_output):
@@ -28,7 +28,7 @@ class WinAddr2LineTests(unittest.TestCase):
             text=True,
         )
 
-        self.assertNotEqual(
+        self.assertEqual(
             result.returncode,
             0,
             f"Command failed. Output:\n{result.stdout}\nStdErr:\n{result.stderr}",
@@ -37,16 +37,57 @@ class WinAddr2LineTests(unittest.TestCase):
             result.stdout.strip(), expected_output.strip(), "Output mismatch"
         )
 
-    def test_line_main(self):
+    def test_line_main_start(self):
         self.run_expecting_success(
-            [*self.line_args, "0x1000"], f"main\n{self.src_path}testApp.cpp:42"
+            [*self.line_args, "0x1000"], f"{self.src_path}testApp.cpp:42"
         )
 
-    def test_line_with_symbol_main(self):
+    def test_line_with_symbol_main_start(self):
         self.run_expecting_success(
-            [*self.line_with_symbol_args, "0x1000"], f"{self.src_path}testApp.cpp:42"
+            [*self.line_with_symbol_args, "0x1000"], f"main\n{self.src_path}testApp.cpp:42"
         )
 
+    def test_line_main_middle(self):
+        self.run_expecting_success(
+            [*self.line_args, "0x10C4"], f"{self.src_path}testApp.cpp:46"
+        )
+
+    def test_line_with_symbol_main_middle(self):
+        self.run_expecting_success(
+            [*self.line_with_symbol_args, "0x10C4"], f"main\n{self.src_path}testApp.cpp:46"
+        )
+
+    def test_line_main_no_prefix(self):
+        self.run_expecting_success(
+            [*self.line_args, "1000"], f"{self.src_path}testApp.cpp:42"
+        )
+    
+    def test_line_with_symbol_main_no_prefix(self):
+        self.run_expecting_success(
+            [*self.line_with_symbol_args, "1000"], f"main\n{self.src_path}testApp.cpp:42"
+        )
+
+    def test_line_lambda(self):
+        self.run_expecting_success(
+            [*self.line_args, "0x2800"], f"{self.src_path}testApp.cpp:31"
+        )
+
+    def test_line_with_symbol_lambda(self):
+        lambda_name = "TextExtractor::processTexts<<lambda_de390742b4447c477e4e7f2e67523fc2> >"
+        self.run_expecting_success(
+            [*self.line_with_symbol_args, "0x2800"], f"{lambda_name}\n{self.src_path}testApp.cpp:31"
+        )
+
+    def test_line_member_function(self):
+        self.run_expecting_success(
+            [*self.line_args, "0x3EA0"], f"{self.src_path}testApp.cpp:24"
+        )
+
+    def test_line_with_symbol_member_function(self):
+        member_function_name = "TextExtractor::printTexts"
+        self.run_expecting_success(
+            [*self.line_with_symbol_args, "0x3EA0"], f"{member_function_name}\n{self.src_path}testApp.cpp:24"
+        )
 
 if __name__ == "__main__":
     if not os.getenv("WINADDR2LINE_PATH"):
