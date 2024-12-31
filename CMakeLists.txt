@@ -16,9 +16,9 @@ add_subdirectory(testing_binary)
 enable_testing()
 
 add_test(
-    NAME e2e_test
-    COMMAND python3 -m unittest discover -s test
+    NAME e2e_tests
+    COMMAND python3 -m unittest discover -s test -v
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
 )
 
-set_tests_properties(e2e_test PROPERTIES ENVIRONMENT "WINADDR2LINE_PATH=$<TARGET_FILE:winaddr2line>")
+set_tests_properties(e2e_tests PROPERTIES ENVIRONMENT "WINADDR2LINE_PATH=$<TARGET_FILE:winaddr2line>")
