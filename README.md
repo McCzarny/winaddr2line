@@ -22,17 +22,26 @@ winaddr2line.exe -e <pdb file> [-f] <address>
 ### Examples
 Convert a single address:
 ```
-winaddr2line.exe -e myapp.pdb 0x1000
+> winaddr2line.exe -e myapp.pdb 0x1000
+D:\a\myapp\src\main.cpp:42
 ```
 
 Convert a single address and show the function name:
 ```
-winaddr2line.exe -e myapp.pdb -f 0x1000
+> winaddr2line.exe -e myapp.pdb -f 0x1000
+main
+D:\a\myapp\src\main.cpp:42
 ```
 
 Convert multiple addresses:
 ```
-winaddr2line.exe -e myapp.pdb 0x1000 0x1100 0x1200
+winaddr2line.exe -e myapp.pdb 0x1000 0x1100 0x2800
+main
+D:\a\myapp\src\main.cpp:42
+foo
+D:\a\myapp\src\main.cpp:44
+Foo::bar<<lambda_de390742b4447c477e4e7f2e67523fc2> >
+D:\a\myapp\src\foo.cpp:10
 ```
 
 ## Contributing

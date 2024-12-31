@@ -10,7 +10,7 @@ void printUsage() {
     std::cout << "Options:" << std::endl;
     std::cout << "  -e <PDB_FILE>  Specify the PDB file to use for symbol resolution." << std::endl;
     std::cout << "  -f             Show the function name in addition to the address." << std::endl;
-    std::cout << "  <ADDRESS>      The address to resolve." << std::endl;
+    std::cout << "  <ADDRESS>...   The address to resolve." << std::endl;
 }
 
 uintptr_t parseAddress(const std::string& address) {
