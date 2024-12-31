@@ -10,7 +10,8 @@
     pkgs.cmake
     pkgs.gnumake
     pkgs.clang-tools
-    pkgs.python3
+    pkgs.python312
+    pkgs.python312Packages.black
   ];
 
   # Sets environment variables in the workspace
@@ -22,6 +23,7 @@
       "ms-python.debugpy"
       "ms-python.python"
       "streetsidesoftware.code-spell-checker"
+      "mikoz.black-py"
     ];
 
     # Workspace lifecycle hooks

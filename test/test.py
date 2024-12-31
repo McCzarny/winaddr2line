@@ -1,75 +1,96 @@
+import unittest
 import subprocess
 import os
 import json
 
-def test_success(winaddr2line_path, args, expected_output):
-    # Run the executable
-    print("Running winaddr2line with args:", args)
-    result = subprocess.run([winaddr2line_path, *args], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
 
-    # Check the return code
-    if result.returncode != 0:
-        print("Test failed")
-        print("Output:", result.stdout)
-        print("Error:", result.stderr)
-        return False
+class WinAddr2LineTests(unittest.TestCase):
+    def setUp(self):
+        self.winaddr2line_path = os.getenv("WINADDR2LINE_PATH")
+        self.script_dir = os.path.dirname(os.path.abspath(__file__))
+        self.line_args = ["-e", os.path.join(self.script_dir, "test_app.pdb")]
+        self.line_with_symbol_args = [
+            "-e",
+            os.path.join(self.script_dir, "test_app.pdb"),
+            "-f",
+        ]
+        self.src_path = (
+            "D:\\a\\winaddr2line\\winaddr2line\\testing_binary\\src\\"
+        )
+
+    def run_expecting_success(self, args, expected_output):
+        # Run the executable
+        print("Running winaddr2line with args:", args)
+        result = subprocess.run(
+            [self.winaddr2line_path, *args],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+        )
+
+        self.assertEqual(
+            result.returncode,
+            0,
+            f"Command failed. Output:\n{result.stdout}\nStdErr:\n{result.stderr}",
+        )
+        self.assertEqual(
+            result.stdout.strip(), expected_output.strip(), "Output mismatch"
+        )
+
+    def test_line_main_start(self):
+        self.run_expecting_success(
+            [*self.line_args, "0x1000"], f"{self.src_path}testApp.cpp:42"
+        )
+
+    def test_line_with_symbol_main_start(self):
+        self.run_expecting_success(
+            [*self.line_with_symbol_args, "0x1000"], f"main\n{self.src_path}testApp.cpp:42"
+        )
+
+    def test_line_main_middle(self):
+        self.run_expecting_success(
+            [*self.line_args, "0x10C4"], f"{self.src_path}testApp.cpp:46"
+        )
+
+    def test_line_with_symbol_main_middle(self):
+        self.run_expecting_success(
+            [*self.line_with_symbol_args, "0x10C4"], f"main\n{self.src_path}testApp.cpp:46"
+        )
+
+    def test_line_main_no_prefix(self):
+        self.run_expecting_success(
+            [*self.line_args, "1000"], f"{self.src_path}testApp.cpp:42"
+        )
     
-    # Check the output
-    if result.stdout.strip() == expected_output.strip():
-        print("Test passed")
-        return True
-    else:
-        print("Test failed")
-        print(f"Expected:\n{expected_output}")
-        print(f"Got:\n{result.stdout}")
-        print("Error:", result.stderr)
-        return False
+    def test_line_with_symbol_main_no_prefix(self):
+        self.run_expecting_success(
+            [*self.line_with_symbol_args, "1000"], f"main\n{self.src_path}testApp.cpp:42"
+        )
 
+    def test_line_lambda(self):
+        self.run_expecting_success(
+            [*self.line_args, "0x2800"], f"{self.src_path}testApp.cpp:31"
+        )
 
-def run_test(winaddr2line_path):
-    print("Running test")
-    print("Exec directory:", winaddr2line_path)
-    
-    failed_tests = []
-    passed_tests = []
+    def test_line_with_symbol_lambda(self):
+        lambda_name = "TextExtractor::processTexts<<lambda_de390742b4447c477e4e7f2e67523fc2> >"
+        self.run_expecting_success(
+            [*self.line_with_symbol_args, "0x2800"], f"{lambda_name}\n{self.src_path}testApp.cpp:31"
+        )
 
-    script_dir = os.path.dirname(os.path.abspath(__file__))
-    test_data_path = os.path.join(script_dir, "test_data.json")
-    with open(test_data_path, "r") as f:
-        test_data = json.load(f)
-    
-    # Test line only mode
-    for test in test_data:
-        args = ["-e", os.path.join(script_dir, "test_app.pdb"), test["input_address"]]
-        if test_success(winaddr2line_path, args, test["expected_line"]):
-            passed_tests.append(test)
-        else:
-            failed_tests.append(test)
+    def test_line_member_function(self):
+        self.run_expecting_success(
+            [*self.line_args, "0x3EA0"], f"{self.src_path}testApp.cpp:24"
+        )
 
-    # Test line and symbol mode
-    for test in test_data:
-        args = ["-e", os.path.join(script_dir, "test_app.pdb"), test["input_address"], "-f"]
-        if test_success(winaddr2line_path, args, f"{test['expected_symbol']}\n{test['expected_line']}"):
-            passed_tests.append(test)
-        else:
-            failed_tests.append(test)
-
-    print("Tests passed:", len(passed_tests))
-    print("Tests failed:", len(failed_tests))
-        
-    if len(failed_tests) > 0 or len(passed_tests) == 0:
-        print("Test failed")
-        return False
-    
-    return True
-
+    def test_line_with_symbol_member_function(self):
+        member_function_name = "TextExtractor::printTexts"
+        self.run_expecting_success(
+            [*self.line_with_symbol_args, "0x3EA0"], f"{member_function_name}\n{self.src_path}testApp.cpp:24"
+        )
 
 if __name__ == "__main__":
-    import argparse
-    parser = argparse.ArgumentParser(description="Run tests for winaddr2line")
-    parser.add_argument("winaddr2line_path", help="Path to winaddr2line executable")
-    args = parser.parse_args()
-    if not run_test(args.winaddr2line_path):
+    if not os.getenv("WINADDR2LINE_PATH"):
+        print("WINADDR2LINE_PATH environment variable is not set")
         exit(1)
-    
-
+    unittest.main()

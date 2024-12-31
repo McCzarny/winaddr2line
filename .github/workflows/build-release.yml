@@ -53,6 +53,8 @@ jobs:
       - name: Run clang-tidy
         shell: pwsh
         run: |
+          dir build
+          dir build/Release
           clang-tidy -p build src/*.cpp -extra-arg=-std=c++17 -- -Iinclude 
       - name: Upload artifact executable
         uses: actions/upload-artifact@v4
@@ -62,8 +64,9 @@ jobs:
       - name: Upload artifact test pdb file
         uses: actions/upload-artifact@v4
         with:
-          name: test-pdb-file
-          path: build/testing_binary/**/test_app.pdb
+          name: test-files
+          path: build/testing_binary/**/test_app.*
+          retention-days: 5
       - name: Create Release
         if: startsWith(github.ref, 'refs/tags/v')
         uses: softprops/action-gh-release@v1
