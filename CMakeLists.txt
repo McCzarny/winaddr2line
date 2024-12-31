@@ -17,6 +17,8 @@ enable_testing()
 
 add_test(
     NAME run_tests
-    COMMAND python3 ./test/test.py $<TARGET_FILE:winaddr2line>
+    COMMAND python3 -m unittest discover -s test $<TARGET_FILE:winaddr2line>
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
 )
+
+set_tests_properties(run_tests PROPERTIES ENVIRONMENT "WINADDR2LINE_PATH=$<TARGET_FILE:winaddr2line>")
