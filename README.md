@@ -4,7 +4,9 @@
 ![License](https://img.shields.io/github/license/McCzarny/winaddr2line)
 ![Version](https://img.shields.io/github/v/release/McCzarny/winaddr2line)
 
-A small tool for getting symbol based on the address.
+> addr2line for Windows
+
+A small tool for getting symbol based on the address. The goal of the project is to provide similar functionality to addr2line for Windows. 
 
 ## Features
 - Convert addresses to symbols using PDB files
@@ -12,7 +14,7 @@ A small tool for getting symbol based on the address.
 - Easy to use command-line interface
 
 ## Installation
-Download the latest release from the [releases page](https://github.com/czarneckim/winaddr2line/releases).
+Download the latest release from the [releases page](https://github.com/McCzarny/winaddr2line/releases).
 
 ## Usage
 ```
