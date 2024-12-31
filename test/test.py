@@ -89,6 +89,29 @@ class WinAddr2LineTests(unittest.TestCase):
             [*self.line_with_symbol_args, "0x3EA0"], f"{member_function_name}\n{self.src_path}testApp.cpp:24"
         )
 
+    def test_line_multiple_addresses(self):
+        self.run_expecting_success(
+            [*self.line_args, "0x1000", "0x1050", "0x1100"],
+            "\n".join([
+                f"{self.src_path}testApp.cpp:42",
+                f"{self.src_path}testApp.cpp:44",
+                f"{self.src_path}testApp.cpp:46",
+            ]),
+        )
+
+    def test_line_with_symbol_multiple_addresses(self):
+        self.run_expecting_success(
+            [*self.line_with_symbol_args, "0x1000", "0x1050", "0x3EA0"],
+            "\n".join([
+                "main",
+                f"{self.src_path}testApp.cpp:42",
+                "main",
+                f"{self.src_path}testApp.cpp:44",
+                "TextExtractor::printTexts",
+                f"{self.src_path}testApp.cpp:24",
+            ]),
+        )
+
 if __name__ == "__main__":
     if not os.getenv("WINADDR2LINE_PATH"):
         print("WINADDR2LINE_PATH environment variable is not set")
