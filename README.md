@@ -6,7 +6,7 @@
 
 > addr2line for Windows
 
-A small tool for getting symbol based on the address. The goal of the project is to provide similar functionality to addr2line for Windows. 
+A small tool for getting symbol based on the Relative Virtual Address (RVA). The goal of the project is to provide similar functionality to addr2line for Windows. 
 
 ## Features
 - Convert addresses to symbols using PDB files
